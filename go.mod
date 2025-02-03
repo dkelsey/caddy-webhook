@@ -1,4 +1,4 @@
-module github.com/WingLim/caddy-webhook
+module github.com/dkelsey/caddy-webhook
 
 go 1.16
 
