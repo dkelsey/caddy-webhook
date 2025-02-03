@@ -26,7 +26,9 @@ type bbPush struct {
 }
 
 func (b Bitbucket) Handle(r *http.Request, hc *HookConf) (int, error) {
-	if !b.verifyBitbucketIP(r.RemoteAddr) {
+	fwdfAddress := r.Header.Get("X-Forwarded-For")
+	//if !b.verifyBitbucketIP(r.RemoteAddr) {
+	if !b.verifyBitbucketIP(fwdfAddress) {
 		return http.StatusForbidden, fmt.Errorf("the request doesn't come from a valid IP")
 	}
 
