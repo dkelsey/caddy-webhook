@@ -29,7 +29,7 @@ func (b Bitbucket) Handle(r *http.Request, hc *HookConf) (int, error) {
 
 	xff := r.Header.Get("X-Forwarded-For")
 	if xff == "" {
-		return http.StatusForbidden, fmt.Errorf("Missing X-Forwarded-For header")
+		return http.StatusForbidden, fmt.Errorf("missing X-Forwarded-For header")
 	}
 
 	// Split the header into individual IPs
@@ -39,8 +39,6 @@ func (b Bitbucket) Handle(r *http.Request, hc *HookConf) (int, error) {
 		ip = strings.TrimSpace(ip)
 		if b.verifyBitbucketIP(ip) {
 			// If one IP matches, allow the request
-			//fmt.Println("Verified IP:", ip)
-			// Proceed with your logic
 			validIp = true
 			break
 		}
