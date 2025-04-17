@@ -26,9 +26,27 @@ type bbPush struct {
 }
 
 func (b Bitbucket) Handle(r *http.Request, hc *HookConf) (int, error) {
-	fwdfAddress := r.Header.Get("X-Forwarded-For")
-	//if !b.verifyBitbucketIP(r.RemoteAddr) {
-	if !b.verifyBitbucketIP(fwdfAddress) {
+
+	xff := r.Header.Get("X-Forwarded-For")
+	if xff == "" {
+		return http.StatusForbidden, fmt.Errorf("Missing X-Forwarded-For header")
+	}
+
+	// Split the header into individual IPs
+	ips := strings.Split(xff, ",")
+	validIp := false
+	for _, ip := range ips {
+		ip = strings.TrimSpace(ip)
+		if b.verifyBitbucketIP(ip) {
+			// If one IP matches, allow the request
+			//fmt.Println("Verified IP:", ip)
+			// Proceed with your logic
+			validIp = true
+			break
+		}
+	}
+
+	if !validIp {
 		return http.StatusForbidden, fmt.Errorf("the request doesn't come from a valid IP")
 	}
 
